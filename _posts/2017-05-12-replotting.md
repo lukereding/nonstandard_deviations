@@ -15,7 +15,7 @@ I started reading [this](http://rspb.royalsocietypublishing.org/content/283/1844
 
 The author's challenge was coming up with a way to present three-dimensional data (the three variables they measured) on a two dimensional page. Here's the result:
 
-![](../images/post1/fig1.png)
+![]({{site.baseurl}}/images/post1/fig1.png)
 
 This is the sort of figure I cringe at. In their attempt to show all the data at once, the authors are sacrificing the ability of someone to actually take something meaningful away from the figure. Specifically, it's difficult for the reader to understand the foraging, activity, and boldness for each of the data points. 
 
@@ -63,7 +63,7 @@ ggplot(df, aes(activity, latency_to_attack)) +
 
 (I'm using a `ggplot` theme I like here, `theme_mod`, and some helper functions, like `add_axes()`, that are defined [here](https://github.com/lukereding/random_scripts/blob/master/plotting_functions.R).)
 
-![](../images/post1/plot1.png)
+![]({{site.baseurl}}/images/post1/plot1.png)
 
 This isn't the best plot but it shows the data, in, I think, a better way than the three-dimensional plot. Part of what we notice with this presentation is that most of the data points are purple: in other words, most of the spider measured are not  very bold. At least to me, this wasn't clear in the original plot of the data.
 
@@ -111,7 +111,7 @@ new_plot <- df %>%
 
 ```
 
-![](../images/post1/plot2.png)
+![]({{site.baseurl}}/images/post1/plot2.png)
 
 In this presentation, other aspects of the dataset are emphasized. For example, for both the species in the left-most column, there are very bold individuals, but the bold individuals appeared to have different activity and foraging tendencies in the two species. It's important to note, though, that a lot of these trends are driven by a couple individuals, which the original replot shows. While abstractions like the surface plot are useful, they often hide information. I think it's actually easier with this type of plot to estimate the difference in 'hyper volumes' among the species.
 
@@ -123,4 +123,7 @@ newplot + geom_point(data = df, aes(x = activity, y = latency_to_attack), color 
 
 ```
 
-![](../images/post1/plot3.png)
+![]({{site.baseurl}}/images/post1/plot3.png)
+
+
+…. to be continued…
