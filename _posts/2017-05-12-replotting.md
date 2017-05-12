@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  initial post
+title:  replotting three dimensional data
 category: jekyll
 description: alternatives to plotting three dimensional data in R
 ---
