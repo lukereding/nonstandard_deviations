@@ -1,11 +1,11 @@
 ---
 layout: post
 title:  a couple recipes for exploratory data visualization in R
-date:   2017-08-21
+date:   2017-09-21
 
 ---
 
-Everyone knows that visualization is a key part of understanding when you're working with data. But all too often, I feel like I get too involved in analyzing the dataset and before actually seeing what the raw data look like. 
+Everyone knows that visualization is key to understanding a dataset. But all too often, I feel like I get too involved in analyzing the dataset before actually seeing what the raw data look like. 
 
 In Python, `pandas` makes this pretty easy:
 
@@ -22,7 +22,7 @@ plt.show()
 
 
 
-In R, [ggpairs](ggobi.github.io/ggally/), as well as `graphics::pairs`, perform similar functions. The issue using `ggpairs` is that if you have a data frame with more than a few variables, it's overwhelming, because for `n` variables n^2 graphs are produced. Often, I want to focus on the distribution of each variable by itself instead of looking at all the pairwise relationships between variables, which can get exhausting quickly. This also means only producing `n` plots, which has a positive effect on my sanity.
+In R, [ggpairs](ggobi.github.io/ggally/), as well as `graphics::pairs`, perform similar functions. The problem with `ggpairs` is that if you have a data frame with more than a few variables the result is criminally complex, because for `n` variables n^2 graphs are produced. Often, I want to focus on the distribution of each variable by itself instead of looking at each pairwise relationship between each of the variables, which can get exhausting quickly. This also means only producing `n` plots, which has a positive effect on my sanity.
 
 Below I show a couple recipes and functions that others might find useful for quickly getting a sense of your data after reading it in. First I show how to plot the distribution of all numeric variables in a dataset. Second I show how to explore the relationship between some categorical variable and each of those numeric variables.
 
@@ -30,7 +30,7 @@ Below I show a couple recipes and functions that others might find useful for qu
 
 ### plotting histograms for all numeric variables
 
-First let's grab some data and load some packages we'll need:
+First let's grab some data and load the `tidyverse`:
 
 ```R
 library(tidyverse)
@@ -76,7 +76,7 @@ plot_histograms(df)
 
 ![]({{site.baseurl}}/images/post8/1.jpg)
 
-This selects only the numeric columns from the data frame, puts the data into [tidy](http://vita.had.co.nz/papers/tidy-data.html) format, then uses `facet_wrap(~variable)` to produce a different plot for each variable. (If the variables are on very different scales, it might make sense to use `facet_wrap(~variable, scales = "free_x")`). You could obviously make this function a lot fancier and more flexible, but it produces a plot that's pretty informative as is.
+This selects only the numeric columns from the data frame, puts the data into [tidy](http://vita.had.co.nz/papers/tidy-data.html) format, then uses `facet_wrap(~variable)` to produce a different plot for each variable. (If the variables are on very different scales, it might make sense to use `facet_wrap(~variable, scales = "free_x")`). You could obviously make this function a lot fancier and more flexible, but it produces a plot that's informative without being overwhelming as is.
 
 We could use the same logic to just look at counts of the categorical variables:
 
@@ -94,11 +94,11 @@ plot_counts(df)
 
 ![]({{site.baseurl}}/images/post8/2.jpg)
 
-### plot the relationship between a categorical variable and all the numeric variables
+### plot the relationship between a categorical variable and each numeric variable
 
-To take it one step further, we're probably interested in getting a first-pass look at the relationship between the numeric variables and each of the categorical variables. Again, `ggpairs` does this already, but depending on the number of variables, it throws in a lot of extra information that can be criminally complex for a human mind to process.
+To take it one step further, we're probably interested in getting a first-pass look at the relationship between the numeric variables and each of the categorical variables. Again, `ggpairs` does this already, but depending on the number of variables, it throws in a lot of extra information that can be difficult for a human brain to process.
 
-Below I define `plot_cat_relationship()`, which is similar to `plot_histograms()`; instead of producing a histogram for each numeric variable, however, it produces a box plot of the relationship between each numeric variable and one categorical variable. This keeps things simple enough for my head to process things.
+Below I define `plot_cat_relationship()`, which is similar to `plot_histograms()`; instead of producing a histogram for each numeric variable, however, it produces a boxplot of the relationship between each numeric variable and one categorical variable. This keeps things simple enough for my head to process things.
 
 The implementation gave me a chance to learn more about [tidyeval](http://dplyr.tidyverse.org/articles/programming.html) and quosures, because the function relies on `tidyverse` packages like `dplyr` that use tidyeval. Interested readers should read the article linked above, which does a really nice job of explaining tidyeval.
 
@@ -142,4 +142,4 @@ plot_cat_relationship(df, Lake)
 
 - Writing functions to automate tasks you should perform more regularly makes those tasks easier to do, and thus increases the likelihood that you'll actually do the task
 - Creating plots with `ggplot2` works pretty seamlessly in functions
-- Using functions from other `tidyverse` packages that use tidyeval can be a little tricky, but with a little practice they can be naturalincorporated into functions and used for programming 
+- Using functions from other `tidyverse` packages that use tidyeval can be a little tricky, but with a little practice they can be naturally incorporated into functions and used for programming 
