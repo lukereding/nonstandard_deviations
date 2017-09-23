@@ -113,7 +113,7 @@ plot_cat_relationship <- function(data, categorical_variable) {
   enquo_cat <- enquo(categorical_variable)
   
   data %>% 
-    select(c(!!enquo_cat), numeric_cols) %>%
+    select(!!enquo_cat, numeric_cols) %>%
     gather(variable, value, -!!enquo_cat) %>%
     ggplot(aes_string(x = quo_name(enquo_cat), y = "value", color = quo_name(enquo_cat))) +
     geom_boxplot() +
