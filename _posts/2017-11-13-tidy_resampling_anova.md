@@ -5,7 +5,7 @@ date:   2017-11-13
 
 ---
 
-In a [previous post](http://www.lreding.com/nonstandard_deviations/2017/10/26/mc_t_test/) I showed how to do a permutation equivalent of a t-test using tools from the [tidyverse](https://www.tidyverse.org) and following the principles of tidy data. Here I'll show how to do the same for ANOVA-like questions.
+In a [previous post](http://www.lreding.com/nonstandard_deviations/2017/10/26/mc_t_test/) I showed how to do a permutation equivalent of a t-test using tools from the [tidyverse](https://www.tidyverse.org) and following the principles of tidy data. Here I'll show how to do a resampling-based equivalent of an ANOVA using tidy data principles.
 
 Choosing an appropriate test statistic is important for any resampling-based approach. Based on a suggestion in a book I read, I'll define the between-group sums of squares as the test statistic of interest. This number is large if a lot of the variation in our dataset is between groups; it's small if our groups don't differ that much. The example below should clarify this.
 
@@ -44,7 +44,7 @@ summary(model)
 	---
 	Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-As expected from the plot, there's a strong relationship between the number of cylinders in a car's engine and it's fuel efficiency.
+As expected from the plot, there's a strong relationship between the number of cylinders in a car's engine and its fuel efficiency.
 
 Now let's try a resampling-based approach, which does not make certain assumptions that an ANOVA makes (e.g. the residuals of the models are normally-distributed). I first define a function, `get_ss`, that takes an ANOVA model as input and returns the between-group sums of squares:
 
@@ -54,7 +54,7 @@ get_ss <- function(model) {
 }
 ```
 
-The primary steps are to:
+The primary steps are now to:
 
 (a) permute one of the two columns (I chose the `cyl` column).  
 (b) run an ANOVA for each of the permutations, from which we can      
@@ -87,7 +87,7 @@ permuted <- permuted <- mtcars %>%
 
 The resulting dataframe, `permuted`, contains the between-group sums of squares for each permuted dataset in the `between_group_ss` column.
 
-*The `between_group_ss` column represents our null expectation: by permuting the `cyl` column, we destroyed any relationship between `cyl` and `mpg`.* We can then compare the between-group sums of squares we observed in the non-permuted data to this null distribution to see how likely it is that we would see a value of `between_group_ss` as extreme as the one we observed in our data:
+*The `between_group_ss` column represents our null expectation: by permuting the `cyl` column, we destroyed any relationship between `cyl` and `mpg`.* We can now compare the between-group sums of squares we observed in the non-permuted data to this null distribution to see how likely it is that we would see a value of `between_group_ss` as extreme as the one we observed in our data:
 
 ```r
 # get actual between group SS
@@ -104,4 +104,22 @@ ggplot(permuted, aes(x = between_group_ss)) +
 
 ![]({{site.baseurl}}/images/post10/plot2.jpg)
 
+We can calculate a p-value in the same way we did in the last post:
+
+```r
+
+# number of permutations 
+n = 999
+
+(sum(abs(permuted$between_group_ss) > ifelse(observed_ss > 0, observed_ss, -observed_ss)) + 1) / (n+1)
+
+```
+	> [1] 0.001
+
+Again, p-values calculated this way can never be 0. We could get a more precise p-value by increasing the number of permutations.
+
 We see that the observed test statistic is far away from what we'd expect if there's no relationship between the number of cylinders and the miles per gallon, suggesting that there is a relationship. The ANOVA we ran above, as well as the plot we created of the raw data, verify that this make sense.
+
+------------
+
+The approach taken above is very powerful and very general. Instead of permutations of a single dataset, you might be interested in thousands of subsets of a much larger dataset. In both cases, the approach--nesting datasets or models then using `mutate` in combination with `map` to go into each dataframe/model and pull something useful out of them--is very handy, and makes plotting with `ggplot` or using other `tidyverse` tools a breeze.
